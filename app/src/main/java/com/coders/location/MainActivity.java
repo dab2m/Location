@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -20,6 +21,14 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient mFusedLocationClient;
 
     private double wayLatitude = 0.0, wayLongitude = 0.0;
+    // Bike ID hardcoded
+    private int bike_id = 1;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private android.widget.Button btnLocation;
@@ -72,6 +83,12 @@ public class MainActivity extends AppCompatActivity {
                     if (location != null) {
                         wayLatitude = location.getLatitude();
                         wayLongitude = location.getLongitude();
+                        MyAsyncLogin async = new MyAsyncLogin();
+                        try {
+                            async.execute("https://Bikepass.herokuapp.com/API/bike.php").get();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         if (!isContinue) {
                             txtLocation.setText(String.format(Locale.US, "%s - %s", wayLatitude, wayLongitude));
                         } else {
@@ -171,6 +188,52 @@ public class MainActivity extends AppCompatActivity {
             if (requestCode == AppConstants.GPS_REQUEST) {
                 isGPS = true; // flag maintain before get location
             }
+        }
+    }
+
+    class MyAsyncLogin extends AsyncTask<String,Void,String> {
+
+        @Override
+        protected String doInBackground(String[]urls) {
+
+            HttpURLConnection connection;
+            OutputStreamWriter request = null;
+
+            URL url = null;
+            String response = null;
+            JSONObject jsonLoginData = new JSONObject();
+            try {
+                jsonLoginData.put("lat",wayLatitude);
+                jsonLoginData.put("long",wayLongitude);
+                jsonLoginData.put("bike_id",bike_id);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                url = new URL(urls[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestMethod("POST");
+                request = new OutputStreamWriter(connection.getOutputStream());
+                request.write(String.valueOf(jsonLoginData));
+                request.flush();
+                request.close();
+                String line = "";
+                InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                isr.close();
+                reader.close();
+                return "Success";
+            } catch (Exception e) {
+                // Error
+                e.printStackTrace();
+            }
+            return null;
         }
     }
 }
