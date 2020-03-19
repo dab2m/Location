@@ -1,67 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:padding="8dp"
+    android:background="@drawable/bg"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+    <TextView
+        android:id="@+id/txtContinueLocation"
+        android:layout_width="347dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="24dp"
+        android:text="Current Location"
+        android:textAlignment="center"
+        android:textColor="#27519E"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/btnContinueLocation"
+        app:layout_constraintStart_toStartOf="@+id/btnContinueLocation"
+        app:layout_constraintTop_toBottomOf="@+id/btnContinueLocation" />
 
-        <Button
-            android:id="@+id/btnLocation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:paddingEnd="16dp"
-            android:paddingStart="16dp"
-            android:text="One time location"
-            android:textAllCaps="false"
-            android:textColor="#ffffff" />
+    <Button
+        android:id="@+id/btnContinueLocation"
+        android:layout_width="286dp"
+        android:layout_height="65dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginEnd="60dp"
+        android:background="@drawable/rounded_button_white"
+        android:text="Send Location"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textColor="#05368F"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:typeface="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.321" />
 
-        <TextView
-            android:id="@+id/txtLocation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:gravity="center"
-            android:textColor="#000" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/btnContinueLocation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:paddingEnd="16dp"
-            android:paddingStart="16dp"
-            android:text="Continuous Location"
-            android:textAllCaps="false"
-            android:textColor="#ffffff" />
-
-        <TextView
-            android:id="@+id/txtContinueLocation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_marginStart="16dp"
-            android:gravity="center"
-            android:textColor="#000" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

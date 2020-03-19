@@ -40,13 +40,10 @@ public class MainActivity extends AppCompatActivity {
     private int bike_id = 1;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
-    private android.widget.Button btnLocation;
-    private TextView txtLocation;
     private android.widget.Button btnContinueLocation;
     private TextView txtContinueLocation;
     private StringBuilder stringBuilder;
 
-    private boolean isContinue = false;
     private boolean isGPS = false;
 
     @Override
@@ -55,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         this.txtContinueLocation = (TextView) findViewById(R.id.txtContinueLocation);
         this.btnContinueLocation = (Button) findViewById(R.id.btnContinueLocation);
-        this.txtLocation = (TextView) findViewById(R.id.txtLocation);
-        this.btnLocation = (Button) findViewById(R.id.btnLocation);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -89,16 +84,12 @@ public class MainActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        if (!isContinue) {
-                            txtLocation.setText(String.format(Locale.US, "%s - %s", wayLatitude, wayLongitude));
-                        } else {
-                            stringBuilder.append(wayLatitude);
-                            stringBuilder.append("-");
-                            stringBuilder.append(wayLongitude);
-                            stringBuilder.append("\n\n");
-                            txtContinueLocation.setText(stringBuilder.toString());
-                        }
-                        if (!isContinue && mFusedLocationClient != null) {
+                        stringBuilder.append(wayLatitude);
+                        stringBuilder.append("  ");
+                        stringBuilder.append(wayLongitude);
+                        stringBuilder.append("\n\n");
+                        txtContinueLocation.setText(stringBuilder.toString());
+                        if (mFusedLocationClient != null) {
                             mFusedLocationClient.removeLocationUpdates(locationCallback);
                         }
                     }
@@ -106,22 +97,11 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        btnLocation.setOnClickListener(v -> {
-
-            if (!isGPS) {
-                Toast.makeText(this, "Please turn on GPS", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            isContinue = false;
-            getLocation();
-        });
-
         btnContinueLocation.setOnClickListener(v -> {
             if (!isGPS) {
                 Toast.makeText(this, "Please turn on GPS", Toast.LENGTH_SHORT).show();
                 return;
             }
-            isContinue = true;
             stringBuilder = new StringBuilder();
             getLocation();
         });
@@ -134,19 +114,7 @@ public class MainActivity extends AppCompatActivity {
                     AppConstants.LOCATION_REQUEST);
 
         } else {
-            if (isContinue) {
                 mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
-            } else {
-                mFusedLocationClient.getLastLocation().addOnSuccessListener(MainActivity.this, location -> {
-                    if (location != null) {
-                        wayLatitude = location.getLatitude();
-                        wayLongitude = location.getLongitude();
-                        txtLocation.setText(String.format(Locale.US, "%s - %s", wayLatitude, wayLongitude));
-                    } else {
-                        mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
-                    }
-                });
-            }
         }
     }
 
@@ -159,20 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    if (isContinue) {
                         mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
-                    } else {
-                        mFusedLocationClient.getLastLocation().addOnSuccessListener(MainActivity.this, location -> {
-                            if (location != null) {
-                                wayLatitude = location.getLatitude();
-                                wayLongitude = location.getLongitude();
-                                txtLocation.setText(String.format(Locale.US, "%s - %s", wayLatitude, wayLongitude));
-                            } else {
-                                mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
-                            }
-                        });
-                    }
                 } else {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }
